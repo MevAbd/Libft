@@ -11,78 +11,123 @@
 # **************************************************************************** #
 
 NAME	= libft.a
+OBJ_DIR	= obj
 
-GCC		= gcc -Wall -Werror -Wextra -I includes
+GCC		= cc -Wall -Werror -Wextra
 
-SRC		+= ft_memset.c
-SRC		+= ft_bzero.c
-SRC		+= ft_memcpy.c
-SRC		+= ft_memccpy.c
-SRC		+= ft_memmove.c
-SRC		+= ft_memchr.c
-SRC		+= ft_memcmp.c
-SRC		+= ft_strlen.c
-SRC		+= ft_strdup.c
-SRC		+= ft_strlcat.c
-SRC		+= ft_strlcpy.c
-SRC		+= ft_strchr.c
-SRC		+= ft_strrchr.c
-SRC		+= ft_strncmp.c
-SRC		+= ft_atoi.c
-SRC		+= ft_isalpha.c
-SRC		+= ft_isdigit.c
-SRC		+= ft_isalnum.c
-SRC		+= ft_isascii.c
-SRC		+= ft_isprint.c
-SRC		+= ft_toupper.c
-SRC		+= ft_tolower.c
-SRC		+= ft_calloc.c
-SRC		+= ft_strnstr.c
-SRC		+= ft_itoa.c
-SRC		+= ft_putchar_fd.c
-SRC		+= ft_putendl_fd.c
-SRC		+= ft_putstr_fd.c
-SRC		+= ft_putnbr_fd.c
-SRC		+= ft_strtrim.c
-SRC		+= ft_strjoin.c
-SRC		+= ft_substr.c
-SRC		+= ft_strtrim.c
-SRC		+= ft_strmapi.c
-SRC		+= ft_split.c
-SRCBON		+= ft_lstnew.c
-SRCBON		+= ft_lstadd_front.c
-SRCBON		+= ft_lstsize.c
-SRCBON		+= ft_lstlast.c
-SRCBON		+= ft_lstadd_back.c
-SRCBON		+= ft_lstdelone.c
-SRCBON		+= ft_lstclear.c
-SRCBON		+= ft_lstiter.c
-SRCBON		+= ft_lstmap.c
+# Mémoire
+SRC		+= src/mem/ft_memset.c
+SRC		+= src/mem/ft_bzero.c
+SRC		+= src/mem/ft_memcpy.c
+SRC		+= src/mem/ft_memccpy.c
+SRC		+= src/mem/ft_memmove.c
+SRC		+= src/mem/ft_memchr.c
+SRC		+= src/mem/ft_memcmp.c
+SRC		+= src/mem/ft_calloc.c
 
-OBJ		+= $(subst .c,.o,$(SRC))
+# Chaînes de base
+SRC		+= src/str/ft_strlen.c
+SRC		+= src/str/ft_strdup.c
+SRC		+= src/str/ft_strlcpy.c
+SRC		+= src/str/ft_strlcat.c
+SRC		+= src/str/ft_strchr.c
+SRC		+= src/str/ft_strrchr.c
+SRC		+= src/str/ft_strncmp.c
+SRC		+= src/str/ft_strnstr.c
 
-OBJBON	+= $(subst .c,.o,$(SRCBON))
+# Caractères
+SRC		+= src/char/ft_isalpha.c
+SRC		+= src/char/ft_isdigit.c
+SRC		+= src/char/ft_isalnum.c
+SRC		+= src/char/ft_isascii.c
+SRC		+= src/char/ft_isprint.c
+SRC		+= src/char/ft_toupper.c
+SRC		+= src/char/ft_tolower.c
+
+# Conversion
+SRC		+= src/conv/ft_atoi.c
+SRC		+= src/conv/ft_itoa.c
+
+# Affichage
+SRC		+= src/put/ft_putchar_fd.c
+SRC		+= src/put/ft_putstr_fd.c
+SRC		+= src/put/ft_putendl_fd.c
+SRC		+= src/put/ft_putnbr_fd.c
+
+# Chaînes avancées
+SRC		+= src/str_extra/ft_substr.c
+SRC		+= src/str_extra/ft_strjoin.c
+SRC		+= src/str_extra/ft_strtrim.c
+SRC		+= src/str_extra/ft_split.c
+SRC		+= src/str_extra/ft_strmapi.c
+SRC		+= src/str_extra/ft_striteri.c
+
+# Bonus - Listes chaînées
+SRCBON		+= src/lst/ft_lstnew.c
+SRCBON		+= src/lst/ft_lstadd_front.c
+SRCBON		+= src/lst/ft_lstsize.c
+SRCBON		+= src/lst/ft_lstlast.c
+SRCBON		+= src/lst/ft_lstadd_back.c
+SRCBON		+= src/lst/ft_lstdelone.c
+SRCBON		+= src/lst/ft_lstclear.c
+SRCBON		+= src/lst/ft_lstiter.c
+SRCBON		+= src/lst/ft_lstmap.c
+
+OBJ		= $(addprefix $(OBJ_DIR)/,$(notdir $(SRC:.c=.o)))
+
+OBJBON	= $(addprefix $(OBJ_DIR)/,$(notdir $(SRCBON:.c=.o)))
 
 INC		+= libft.h
 
 all: $(NAME)
+	@echo "✓ Everything is OK"
 
-$(NAME): $(OBJ) $(INC)
-	ar rc $@ $^
-	ranlib $@
+$(NAME): $(OBJ_DIR) $(OBJ) $(INC)
+	@echo "📦 Creating library..."
+	@ar rc $@ $(OBJ)
+	@ranlib $@
+	@echo "✓ Library created: $(NAME)"
 
-bonus : $(OBJBON) $(INC)
-	ar rc libft.a $^
-	ranlib libft.a
+bonus : $(OBJ_DIR) $(OBJ) $(OBJBON) $(INC)
+	@echo "📦 Creating library with bonus..."
+	@ar rc $(NAME) $(OBJ) $(OBJBON)
+	@ranlib $(NAME)
+	@echo "✓ Everything is OK (with bonus)"
 
-%.o: %.c $(INC)
-	$(GCC) -o $@ -c $<
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
+
+# Règle générique pour compiler depuis n'importe quel sous-dossier
+$(OBJ_DIR)/%.o: src/mem/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/str/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/char/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/conv/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/put/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/str_extra/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
+
+$(OBJ_DIR)/%.o: src/lst/%.c $(INC) | $(OBJ_DIR)
+	@$(GCC) -I. -o $@ -c $<
 
 clean:
-	rm -rf $(OBJ) $(OBJBON)
+	@echo "🧹 Cleaning object files..."
+	@rm -rf $(OBJ_DIR) 2>/dev/null || true
+	@echo "✓ Clean done"
 
 fclean: clean
-	rm -rf $(NAME)
+	@echo "🧹 Cleaning library..."
+	@rm -rf $(NAME) 2>/dev/null || true
+	@echo "✓ Full clean done"
 
 re: fclean all
 

@@ -131,4 +131,11 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: clean fclean re bonus
+test: bonus
+	@echo "🧪 Compiling tests..."
+	@cc -Wall -Wextra -Werror tests/test_libft.c -L. -lft -I. -o test_libft
+	@echo "✓ Test compiled"
+	@echo ""
+	@./test_libft
+
+.PHONY: clean fclean re bonus test

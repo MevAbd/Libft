@@ -5,6 +5,7 @@
 ## 📋 Table des matières
 
 - [Compilation](#-compilation)
+- [Tests](#-tests)
 - [Structure du projet](#-structure-du-projet)
 - [Fonctions disponibles](#-fonctions-disponibles)
 - [Bonus](#-bonus)
@@ -27,6 +28,109 @@ make clean      # Supprime les fichiers objets (.o)
 make fclean     # Supprime les fichiers objets et la bibliothèque
 make re         # Nettoie et recompile tout
 ```
+
+## 🧪 Tests
+
+Le projet inclut un testeur complet qui vérifie toutes les fonctions avec des cas limites approfondis.
+
+### Exécuter les tests
+
+```bash
+make test
+```
+
+Cette commande :
+1. Compile la bibliothèque avec bonus
+2. Compile le testeur
+3. Exécute automatiquement tous les tests (225 tests au total)
+
+### Résultat attendu
+
+Vous verrez un affichage organisé par sections avec :
+- ✓ en vert pour les tests réussis
+- ✗ en rouge pour les tests échoués
+- Un résumé final avec le nombre de tests réussis
+
+Exemple de sortie :
+```
+─── ft_strlen ───
+✓ ft_strlen: chaîne normale
+✓ ft_strlen: chaîne vide
+✓ ft_strlen: chaîne longue
+✓ ft_strlen: un caractère
+
+Résultat: 225/225 tests réussis
+```
+
+### Utiliser le testeur dans votre propre projet
+
+Le testeur peut être adapté pour tester vos propres fonctions. Voici comment :
+
+1. **Copier le fichier de test** :
+```bash
+cp tests/test_libft.c votre_projet/tests/test_votre_projet.c
+```
+
+2. **Modifier le fichier de test** :
+   - Remplacez `#include "../libft.h"` par votre header
+   - Modifiez les chemins d'inclusion si nécessaire
+   - Ajoutez vos propres tests en utilisant la fonction `test()`
+
+3. **Exemple d'ajout de test** :
+```c
+// Dans votre fichier de test
+test("ma_fonction: cas normal", ma_fonction("test") == 4);
+test("ma_fonction: chaîne vide", ma_fonction("") == 0);
+test("ma_fonction: cas limite", ma_fonction(NULL) == -1);
+```
+
+4. **Compiler et exécuter** :
+```bash
+# Compiler votre bibliothèque
+make
+
+# Compiler le testeur
+cc -Wall -Wextra -Werror tests/test_votre_projet.c -L. -lft -I. -o test_votre_projet
+
+# Exécuter
+./test_votre_projet
+```
+
+### Fonction `test()` expliquée
+
+La fonction `test()` prend deux paramètres :
+- **Nom du test** : Une description claire de ce qui est testé
+- **Résultat** : Une expression booléenne (0 = échec, non-zéro = succès)
+
+```c
+void test(const char *name, int result);
+```
+
+**Exemple** :
+```c
+// Test simple
+test("ft_strlen: chaîne normale", ft_strlen("hello") == 5);
+
+// Test avec plusieurs conditions
+test("ft_isalpha: minuscule", ft_isalpha('a') && ft_isalpha('z'));
+
+// Test avec comparaison
+char *s = ft_strdup("test");
+test("ft_strdup: duplication", s && !strcmp(s, "test"));
+free(s);
+```
+
+### Cas limites testés
+
+Le testeur couvre :
+- ✅ Chaînes vides `""`
+- ✅ Tailles 0
+- ✅ Valeurs NULL (quand applicable)
+- ✅ Valeurs extrêmes (INT_MAX, INT_MIN)
+- ✅ Chevauchements mémoire
+- ✅ Buffers trop petits
+- ✅ Caractères spéciaux (`\0`, etc.)
+- ✅ Cas limites spécifiques à chaque fonction
 
 ## 📁 Structure du projet
 
